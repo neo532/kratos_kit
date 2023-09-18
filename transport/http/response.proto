@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package http;
+import "google/protobuf/any.proto";
+
+option go_package = "transport/http;http";
+
+message Response {
+    int32 code = 1;
+    string message = 2;
+    google.protobuf.Any data = 3;
+    string reason = 4;
+    string traceId = 5;
+    uint32 responseTime = 6;
+}
