@@ -4,6 +4,7 @@ go 1.21.1
 
 require (
 	github.com/IBM/sarama v1.41.1
+	github.com/forgoer/openssl v1.6.0
 	github.com/go-kratos/kratos/v2 v2.7.0
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/golang/protobuf v1.5.3
