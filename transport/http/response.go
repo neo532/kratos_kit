@@ -62,7 +62,7 @@ func ResponseEncoder(w http.ResponseWriter, r *http.Request, d interface{}) (err
 		}
 	default:
 		reply := &Response{
-			Code:    0,
+			Code:    http.StatusOK,
 			Message: "ok",
 			Reason:  "OK",
 			Metadata: map[string]string{
