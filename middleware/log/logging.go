@@ -10,7 +10,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"runtime"
 	"strings"
 	"time"
 
@@ -122,10 +121,8 @@ func Server(logger klog.Logger) kmdw.Middleware {
 			md, ok := metadata.FromServerContext(ctx)
 			if ok {
 				if se := errors.FromError(err); se != nil {
-					fmt.Println(runtime.Caller(0))
 					mdt := make(map[string]string, len(md))
 					md.Range(func(k string, v []string) bool {
-						fmt.Println(fmt.Sprintf("v:\t%+v", v))
 						mdt[k] = v[0]
 						return true
 					})
