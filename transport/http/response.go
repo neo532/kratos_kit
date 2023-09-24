@@ -96,13 +96,13 @@ func ErrorEncoder(w http.ResponseWriter, r *http.Request, err error) {
 	default:
 		body, err = codec.Marshal(se)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
+			//w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 	}
 
 	w.Header().Set("Content-Type", ContentType(codec.Name()))
-	w.WriteHeader(int(se.Code))
+	//w.WriteHeader(int(se.Code))
 
 	_, _ = w.Write(body)
 }
