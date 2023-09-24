@@ -13,13 +13,12 @@ const (
 	From      = "from"      // 从哪个服务请求来的
 	Name      = "name"      // 当前服务名
 	Benchmark = "benchmark" // 是否是压测
+	Timestamp = "timestamp" // 用于返回值
 
 	TraceID     = "traceId"     // 链路跟踪ID
 	RPCID       = "rpcId"       //use for client header to request other service.
 	RPCIDServer = "rpcIdServer" //use for logging.
 	Group       = "group"       //use for dev.
-
-	DBTransation = "dbTransation"
 )
 
 // context value

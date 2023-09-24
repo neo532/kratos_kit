@@ -11,6 +11,7 @@ import (
 
 	"github.com/neo532/gokit/middleware"
 
+	"github.com/go-kratos/kratos/v2/metadata"
 	kmdw "github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"
 )
@@ -43,6 +44,33 @@ func Server() kmdw.Middleware {
 				// from
 				from := tr.RequestHeader().Get(middleware.From)
 				ctx = SetFromForServer(ctx, from)
+
+				md, ok := metadata.FromServerContext(ctx)
+				if !ok {
+					md = metadata.New()
+				}
+				md.Add(middleware.TraceID, GetTraceIDByCtx(ctx))
+				md.Add(middleware.RPCID, rpcID)
+				md.Add(middleware.From, from)
+				ctx = metadata.NewServerContext(ctx, md)
+
+				// tr.ReplyHeader().Add("cccc", "dddd")
+				// md, ok := metadata.FromClientContext(ctx)
+				// if !ok {
+				// 	md = metadata.New()
+				// }
+				// md.Add("a", "b")
+				// fmt.Println(fmt.Sprintf("md:\t%+v", md))
+				// fmt.Println(fmt.Sprintf("ok:\t%+v", ok))
+				// // var md metadata.Metadata
+				// // var ok bool
+				// // if md, ok = metadata.FromClientContext(c); ok {
+				// // 	md.Add("aa", "cc")
+				// // } else {
+				// // 	md = metadata.New()
+				// // }
+				// fmt.Println(fmt.Sprintf("md:\t%+v", md))
+				// ctx = metadata.NewServerContext(ctx, md)
 			}
 			return handler(ctx, req)
 		}

@@ -2,7 +2,6 @@ package ecb
 
 import (
 	"encoding/base64"
-	"fmt"
 
 	"github.com/forgoer/openssl"
 )
@@ -36,9 +35,6 @@ func New(opts ...opt) (os *ECB) {
 }
 
 func (o *ECB) Encrypt(origin []byte) (encrypt string, err error) {
-	fmt.Println(fmt.Sprintf("origin:\t%+v", string(origin)))
-	fmt.Println(fmt.Sprintf("o.key:\t%+v", string(o.key)))
-	fmt.Println(fmt.Sprintf("o.padding:\t%+v", o.padding))
 	var en []byte
 	en, err = openssl.AesECBEncrypt(origin, o.key, o.padding)
 	encrypt = base64.StdEncoding.EncodeToString(en)
@@ -46,5 +42,7 @@ func (o *ECB) Encrypt(origin []byte) (encrypt string, err error) {
 }
 
 func (o *ECB) Decrypt(encrypt string) (origin []byte, err error) {
-	return openssl.AesECBEncrypt([]byte(encrypt), o.key, o.padding)
+	var en []byte
+	en, err = base64.StdEncoding.DecodeString(encrypt)
+	return openssl.AesECBDecrypt(en, o.key, o.padding)
 }

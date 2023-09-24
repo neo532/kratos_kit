@@ -12,13 +12,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/neo532/gokit/middleware"
-
-	proto "github.com/golang/protobuf/proto"
-	anypb "google.golang.org/protobuf/types/known/anypb"
-
 	"github.com/go-kratos/kratos/v2/errors"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
+	proto "github.com/golang/protobuf/proto"
+	"github.com/neo532/gokit/middleware"
+	anypb "google.golang.org/protobuf/types/known/anypb"
 )
 
 // ContentType returns the content-type with base prefix.
@@ -64,10 +62,13 @@ func ResponseEncoder(w http.ResponseWriter, r *http.Request, d interface{}) (err
 		}
 	default:
 		reply := &Response{
-			Code:         0,
-			Message:      "ok",
-			TraceId:      traceId,
-			ResponseTime: uint32(time.Now().Unix()),
+			Code:    0,
+			Message: "ok",
+			Reason:  "OK",
+			Metadata: map[string]string{
+				middleware.TraceID:   traceId,
+				middleware.Timestamp: strconv.FormatInt(time.Now().Unix(), 10),
+			},
 		}
 		if v, ok := d.(proto.Message); ok {
 			any, e := anypb.New(proto.MessageV2(v))
@@ -85,35 +86,23 @@ func ResponseEncoder(w http.ResponseWriter, r *http.Request, d interface{}) (err
 }
 
 func ErrorEncoder(w http.ResponseWriter, r *http.Request, err error) {
-	codec, _ := khttp.CodecForRequest(r, "Accept")
-	w.Header().Set("Content-Type", ContentType(codec.Name()))
-	traceId := r.Header.Get(middleware.TraceID)
-	w.Header().Set(middleware.TraceID, traceId)
 	se := errors.FromError(err)
-	code := int(se.Code)
+	codec, _ := khttp.CodecForRequest(r, "Accept")
+
 	var body []byte
-
 	switch {
-	case IsCallback(r.RequestURI):
-		response := strings.Replace(se.Message, "{code}", strconv.Itoa(code), 1)
-		response = strings.Replace(response, "{reason}", se.Reason, 1)
-		body = []byte(response)
-
+	case IsOriginCallback(r.RequestURI), IsCallback(r.RequestURI):
+		body = []byte(se.Message)
 	default:
-		reply := &Response{
-			Code:         int32(code),
-			Message:      se.Message,
-			Reason:       err.Error(),
-			Data:         nil,
-			TraceId:      traceId,
-			ResponseTime: uint32(time.Now().Unix()),
+		body, err = codec.Marshal(se)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
 		}
-		body, err = codec.Marshal(reply)
 	}
 
-	if err != nil && code < 600 {
-		w.WriteHeader(code)
-	}
+	w.Header().Set("Content-Type", ContentType(codec.Name()))
+	w.WriteHeader(int(se.Code))
+
 	_, _ = w.Write(body)
-	return
 }

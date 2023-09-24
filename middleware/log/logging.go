@@ -10,6 +10,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"runtime"
 	"strings"
 	"time"
 
@@ -17,6 +18,7 @@ import (
 
 	"github.com/go-kratos/kratos/v2/errors"
 	klog "github.com/go-kratos/kratos/v2/log"
+	"github.com/go-kratos/kratos/v2/metadata"
 	kmdw "github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"
 	httptr "github.com/go-kratos/kratos/v2/transport/http"
@@ -56,7 +58,7 @@ func Server(logger klog.Logger) kmdw.Middleware {
 
 				// method
 				method := "POST"
-				if m := info.ReplyHeader().Get("Method"); m != "" {
+				if m := info.RequestHeader().Get("Method"); m != "" {
 					method = m
 				}
 
@@ -67,7 +69,7 @@ func Server(logger klog.Logger) kmdw.Middleware {
 
 					var b []byte
 					b, _ = json.Marshal(req)
-					if len(b) != 0 {
+					if len(b) != 0 && string(b) != "{}" {
 						msg.WriteString(" -d '")
 						msg.WriteString(string(b))
 						msg.WriteString("'")
@@ -116,6 +118,25 @@ func Server(logger klog.Logger) kmdw.Middleware {
 
 			// err
 			level, stack, code, reason := extractError(err)
+
+			md, ok := metadata.FromServerContext(ctx)
+			if ok {
+				if se := errors.FromError(err); se != nil {
+					fmt.Println(runtime.Caller(0))
+					mdt := make(map[string]string, len(md))
+					md.Range(func(k string, v []string) bool {
+						fmt.Println(fmt.Sprintf("v:\t%+v", v))
+						mdt[k] = v[0]
+						return true
+					})
+					err = se.WithMetadata(mdt)
+				}
+			}
+
+			// if se := errors.FromError(err); se != nil {
+			// 	fmt.Println(runtime.Caller(0))
+			// 	err = se.WithMetadata(map[string]string{"aaa": "aaaaaaaaaaaa"})
+			// }
 
 			// log
 			_ = klog.WithContext(ctx, logger).Log(level,
