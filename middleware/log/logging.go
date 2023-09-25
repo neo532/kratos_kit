@@ -30,6 +30,7 @@ var (
 	AllowLogHeader = map[string]struct{}{
 		"Content-Type": {},
 		"User-Agent":   {},
+		"token":        {},
 	}
 )
 
