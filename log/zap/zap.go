@@ -145,7 +145,6 @@ func NewLogger(opts ...Option) (logger *ZapLogger) {
 
 	case "dev":
 		core = zapcore.NewCore(
-			//zapcore.NewConsoleEncoder(encoderConf),
 			zapcore.NewJSONEncoder(encoderConf),
 			zapcore.NewMultiWriteSyncer(
 				zapcore.AddSync(os.Stdout),
@@ -156,8 +155,7 @@ func NewLogger(opts ...Option) (logger *ZapLogger) {
 
 	default:
 		core = zapcore.NewCore(
-			//zapcore.NewJSONEncoder(encoderConf),
-			zapcore.NewConsoleEncoder(encoderConf),
+			zapcore.NewJSONEncoder(encoderConf),
 			zapcore.NewMultiWriteSyncer(
 				zapcore.AddSync(zapcore.AddSync(logger.syncerConf)),
 			),
