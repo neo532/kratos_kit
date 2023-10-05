@@ -32,6 +32,7 @@ const (
 	EntryAdmin    = "admin"
 	EntryScript   = "script"
 	EntryConsumer = "consumer"
+	EntryTest     = "test"
 
 	BenchmarkYes = "1"
 )
