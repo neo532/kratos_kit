@@ -1,6 +1,6 @@
 module github.com/neo532/gokit
 
-go 1.21.1
+go 1.18
 
 require (
 	github.com/IBM/sarama v1.41.1
