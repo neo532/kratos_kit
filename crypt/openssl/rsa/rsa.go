@@ -4,7 +4,7 @@ import (
 	"github.com/forgoer/openssl"
 
 	"github.com/neo532/gokit/crypt"
-	"github.com/neo532/gokit/crypt/encoding/url"
+	"github.com/neo532/gokit/crypt/encoding/std"
 )
 
 type RSA struct {
@@ -33,7 +33,7 @@ func WithEncoding(coding crypt.IEncoding) opt {
 
 func New(opts ...opt) (os *RSA) {
 	os = &RSA{
-		coding: url.New(),
+		coding: std.New(),
 	}
 	for _, fn := range opts {
 		fn(os)
