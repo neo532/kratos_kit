@@ -20,18 +20,18 @@ func WithPadding(padding string) opt {
 		o.padding = padding
 	}
 }
-func WithKey(key []byte) opt {
+func WithKey(key string) opt {
 	return func(o *CBC) {
-		o.key = key
+		o.key = []byte(key)
 	}
 }
-func WithIv(iv []byte) opt {
+func WithIv(iv string) opt {
 	return func(o *CBC) {
-		o.iv = iv
+		o.iv = []byte(iv)
 	}
 }
 func WithEncoding(coding crypt.IEncoding) opt {
-	return func(o *RSA) {
+	return func(o *CBC) {
 		o.coding = coding
 	}
 }
@@ -57,5 +57,5 @@ func (o *CBC) Encrypt(origin []byte) (encrypt string, err error) {
 func (o *CBC) Decrypt(encrypt string) (origin []byte, err error) {
 	var en []byte
 	en, err = o.coding.Decode(encrypt)
-	return openssl.AesCBCEncrypt(en, o.key, o.iv, o.padding)
+	return openssl.AesCBCDecrypt(en, o.key, o.iv, o.padding)
 }

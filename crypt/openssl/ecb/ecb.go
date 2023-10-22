@@ -20,13 +20,13 @@ func WithPadding(padding string) opt {
 		o.padding = padding
 	}
 }
-func WithKey(key []byte) opt {
+func WithKey(key string) opt {
 	return func(o *ECB) {
-		o.key = key
+		o.key = []byte(key)
 	}
 }
 func WithEncoding(coding crypt.IEncoding) opt {
-	return func(o *RSA) {
+	return func(o *ECB) {
 		o.coding = coding
 	}
 }
