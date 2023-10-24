@@ -48,6 +48,9 @@ func New(opts ...opt) (os *CBC) {
 }
 
 func (o *CBC) Encrypt(origin []byte) (encrypt string, err error) {
+	if len(origin) == 0 {
+		return
+	}
 	var en []byte
 	en, err = openssl.AesCBCEncrypt(origin, o.key, o.iv, o.padding)
 	encrypt = o.coding.Encode(en)
@@ -55,6 +58,9 @@ func (o *CBC) Encrypt(origin []byte) (encrypt string, err error) {
 }
 
 func (o *CBC) Decrypt(encrypt string) (origin []byte, err error) {
+	if encrypt == "" {
+		return
+	}
 	var en []byte
 	en, err = o.coding.Decode(encrypt)
 	return openssl.AesCBCDecrypt(en, o.key, o.iv, o.padding)
