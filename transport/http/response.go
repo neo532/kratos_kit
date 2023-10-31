@@ -7,7 +7,10 @@ package http
  */
 
 import (
+	"encoding/json"
+	oriErr "errors"
 	"net/http"
+	reflect "reflect"
 	"strconv"
 	"strings"
 	"time"
@@ -24,18 +27,15 @@ func ContentType(subtype string) string {
 	return strings.Join([]string{"application", subtype}, "/")
 }
 
-func IsCallback(url string) bool {
-	return strings.HasSuffix(url, "/callback")
+func IsReturnOrigin(url string) bool {
+	return strings.HasSuffix(url, "/return/origin")
 }
 
-func IsOriginCallback(url string) bool {
-	if strings.Index(url, "/callback/origin") != -1 {
-		return true
-	}
-	return false
+func IsReturnData(url string) bool {
+	return strings.HasSuffix(url, "/return/data")
 }
 
-type OriginCallback struct {
+type ReturnData struct {
 	Data string `json:"data"`
 }
 
@@ -47,16 +47,20 @@ func ResponseEncoder(w http.ResponseWriter, r *http.Request, d interface{}) (err
 	w.Header().Set(middleware.TraceID, traceId)
 	var data []byte
 	switch {
-	case IsOriginCallback(r.RequestURI):
-		if data, err = codec.Marshal(d); err != nil {
+	case IsReturnData(r.RequestURI):
+
+		T := reflect.TypeOf(d)
+		V := reflect.ValueOf(d)
+		switch {
+		case T.Kind() == reflect.Struct:
+		case T.Kind() == reflect.Ptr && T.Elem().Kind() == reflect.Struct:
+			V = V.Elem()
+		default:
+			err = oriErr.New("ResponseEncoder has wrong type!")
 			return
 		}
-		var ori = new(OriginCallback)
-		if err = codec.Unmarshal(data, &ori); err != nil {
-			return
-		}
-		data = []byte(ori.Data)
-	case IsCallback(r.RequestURI):
+		data = []byte(V.FieldByName("Data").String())
+	case IsReturnOrigin(r.RequestURI):
 		if data, err = codec.Marshal(d); err != nil {
 			return
 		}
@@ -85,13 +89,22 @@ func ResponseEncoder(w http.ResponseWriter, r *http.Request, d interface{}) (err
 	return
 }
 
+func NewReturnErrorByJson(reply interface{}) (err error) {
+	var b []byte
+	if b, err = json.Marshal(reply); err != nil {
+		return
+	}
+	err = oriErr.New(string(b))
+	return
+}
+
 func ErrorEncoder(w http.ResponseWriter, r *http.Request, err error) {
 	se := errors.FromError(err)
 	codec, _ := khttp.CodecForRequest(r, "Accept")
 
 	var body []byte
 	switch {
-	case IsOriginCallback(r.RequestURI), IsCallback(r.RequestURI):
+	case IsReturnData(r.RequestURI), IsReturnOrigin(r.RequestURI):
 		body = []byte(se.Message)
 	default:
 		body, err = codec.Marshal(se)
