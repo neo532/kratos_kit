@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	"regexp"
+	"strings"
 
 	"github.com/go-kratos/kratos/v2/encoding"
 	"golang.org/x/text/encoding/simplifiedchinese"
@@ -20,6 +21,8 @@ func init() {
 	encoding.RegisterCodec(Codec{})
 }
 
+var regexpEncoding = regexp.MustCompile(`\sencoding=['"]?([^'"]+)['"]?`)
+
 // codec is a Codec implementation with xml.
 type Codec struct{}
 
@@ -28,17 +31,25 @@ func (Codec) Marshal(v interface{}) ([]byte, error) {
 }
 
 func (c Codec) Unmarshal(data []byte, v interface{}) (err error) {
-	var xmlBytes []byte
-	xmlBytes, err = c.GbkToUtf8(data)
-	if err != nil {
-		return
-	}
-	decoder := oxml.NewDecoder(bytes.NewReader(xmlBytes))
-	decoder.CharsetReader = func(charset string, input io.Reader) (io.Reader, error) {
-		return transform.NewReader(input, simplifiedchinese.GBK.NewEncoder()), nil
-	}
 
-	err = decoder.Decode(v)
+	if s := string(data); len(s) > 40 {
+		if match := regexpEncoding.FindStringSubmatch(s[:40]); len(match) > 1 {
+			switch strings.ToUpper(match[1]) {
+			case "GBK", "GB2312":
+				if data, err = c.GbkToUtf8(data); err != nil {
+					return
+				}
+				decoder := oxml.NewDecoder(bytes.NewReader(data))
+				decoder.CharsetReader = func(charset string, input io.Reader) (io.Reader, error) {
+					return transform.NewReader(input, simplifiedchinese.GBK.NewEncoder()), nil
+				}
+
+				err = decoder.Decode(v)
+				return
+			}
+		}
+	}
+	err = xml.Unmarshal(data, v)
 	return
 }
 
@@ -46,17 +57,14 @@ func (c Codec) Name() string {
 	return Name
 }
 
-var regexpEncoding = regexp.MustCompile(`\sencoding=['"]?\w+['"]?`)
-
-func (c Codec) GbkToUtf8(s []byte) ([]byte, error) {
+func (c Codec) GbkToUtf8(s []byte) (byt []byte, err error) {
 	reader := transform.NewReader(bytes.NewReader(s), simplifiedchinese.GBK.NewDecoder())
-	d, e := ioutil.ReadAll(reader)
-	if e != nil {
-		return nil, e
+	if byt, err = ioutil.ReadAll(reader); err != nil {
+		return
 	}
 
-	str := string(d)
+	str := string(byt)
 	str = regexpEncoding.ReplaceAllString(str, " encoding='UTF-8'")
-
-	return []byte(str), nil
+	byt = []byte(str)
+	return
 }
