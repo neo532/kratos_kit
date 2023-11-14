@@ -6,6 +6,7 @@ import (
 	oxml "encoding/xml"
 	"io"
 	"io/ioutil"
+	"net/url"
 	"regexp"
 	"strings"
 
@@ -31,12 +32,15 @@ func (Codec) Marshal(v interface{}) ([]byte, error) {
 }
 
 func (c Codec) Unmarshal(data []byte, v interface{}) (err error) {
-
 	if s := string(data); len(s) > 40 {
+
+		s, _ = url.PathUnescape(s)
+		s = strings.ReplaceAll(s, "+", " ")
+
 		if match := regexpEncoding.FindStringSubmatch(s[:40]); len(match) > 1 {
 			switch strings.ToUpper(match[1]) {
 			case "GBK", "GB2312":
-				if data, err = c.GbkToUtf8(data); err != nil {
+				if data, err = c.GbkToUtf8([]byte(s)); err != nil {
 					return
 				}
 				decoder := oxml.NewDecoder(bytes.NewReader(data))
