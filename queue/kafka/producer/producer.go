@@ -82,6 +82,11 @@ func WithContext(c context.Context) Opt {
 		o.bootstrapContext = c
 	}
 }
+func WithIdempotent(b bool) Opt {
+	return func(o *Producer) {
+		o.conf.Producer.Idempotent = b
+	}
+}
 
 // ========== /Option ==========
 
