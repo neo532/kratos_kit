@@ -87,6 +87,11 @@ func WithIdempotent(b bool) Opt {
 		o.conf.Producer.Idempotent = b
 	}
 }
+func WithNetMaxOpenRequest(i int) Opt {
+	return func(o *Producer) {
+		o.conf.Net.MaxOpenRequests = i
+	}
+}
 
 // ========== /Option ==========
 
