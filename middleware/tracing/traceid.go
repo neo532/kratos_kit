@@ -10,7 +10,7 @@ import (
 	"context"
 	"strings"
 
-	"github.com/neo532/gokit/middleware"
+	"github.com/neo532/kratos_kit/middleware"
 
 	"github.com/go-kratos/kratos/v2/log"
 	uuid "github.com/satori/go.uuid"

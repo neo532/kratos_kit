@@ -11,7 +11,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"github.com/neo532/gokit/middleware/tracing"
+	"github.com/neo532/kratos_kit/middleware/tracing"
 )
 
 type contextTransactionKey struct{}

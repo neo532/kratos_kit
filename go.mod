@@ -1,4 +1,4 @@
-module github.com/neo532/gokit
+module github.com/neo532/kratos_kit
 
 go 1.18
 

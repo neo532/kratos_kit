@@ -18,7 +18,7 @@ import (
 	"github.com/go-kratos/kratos/v2/errors"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	proto "github.com/golang/protobuf/proto"
-	"github.com/neo532/gokit/middleware"
+	"github.com/neo532/kratos_kit/middleware"
 	anypb "google.golang.org/protobuf/types/known/anypb"
 )
 

@@ -9,7 +9,7 @@ package redis
 import (
 	"context"
 
-	"github.com/neo532/gokit/database/redis"
+	"github.com/neo532/kratos_kit/database/redis"
 )
 
 // ========== GoRedis ==========

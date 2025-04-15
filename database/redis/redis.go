@@ -15,7 +15,7 @@ import (
 	klog "github.com/go-kratos/kratos/v2/log"
 	"github.com/go-redis/redis/v8"
 
-	"github.com/neo532/gokit/log"
+	"github.com/neo532/kratos_kit/log"
 )
 
 // ========== Option ==========

@@ -22,8 +22,8 @@ import (
 	"github.com/go-kratos/kratos/v2/transport"
 	httptr "github.com/go-kratos/kratos/v2/transport/http"
 
-	"github.com/neo532/gokit/log"
-	mdwServer "github.com/neo532/gokit/middleware/server"
+	"github.com/neo532/kratos_kit/log"
+	mdwServer "github.com/neo532/kratos_kit/middleware/server"
 )
 
 var (

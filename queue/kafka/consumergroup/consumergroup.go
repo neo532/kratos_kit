@@ -19,10 +19,10 @@ import (
 
 	klog "github.com/go-kratos/kratos/v2/log"
 
-	"github.com/neo532/gokit/log"
-	"github.com/neo532/gokit/middleware"
-	"github.com/neo532/gokit/middleware/tracing"
-	"github.com/neo532/gokit/queue/kafka"
+	"github.com/neo532/kratos_kit/log"
+	"github.com/neo532/kratos_kit/middleware"
+	"github.com/neo532/kratos_kit/middleware/tracing"
+	"github.com/neo532/kratos_kit/queue/kafka"
 )
 
 var (

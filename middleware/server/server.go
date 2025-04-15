@@ -11,7 +11,7 @@ import (
 
 	kmdw "github.com/go-kratos/kratos/v2/middleware"
 
-	"github.com/neo532/gokit/middleware"
+	"github.com/neo532/kratos_kit/middleware"
 )
 
 // Env is an server logging middleware.

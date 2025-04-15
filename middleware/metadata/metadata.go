@@ -9,8 +9,8 @@ package metadata
 import (
 	"context"
 
-	"github.com/neo532/gokit/middleware"
-	"github.com/neo532/gokit/middleware/tracing"
+	"github.com/neo532/kratos_kit/middleware"
+	"github.com/neo532/kratos_kit/middleware/tracing"
 )
 
 // GetTraceIDByCtx returns traceID and value for metadata of client with context.

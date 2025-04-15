@@ -15,7 +15,7 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 
-	"github.com/neo532/gokit/middleware"
+	"github.com/neo532/kratos_kit/middleware"
 )
 
 // ========== RpcID==========

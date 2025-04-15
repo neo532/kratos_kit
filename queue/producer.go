@@ -9,8 +9,8 @@ package queue
 import (
 	"context"
 
-	"github.com/neo532/gokit/middleware/server"
-	"github.com/neo532/gokit/middleware/tracing"
+	"github.com/neo532/kratos_kit/middleware/server"
+	"github.com/neo532/kratos_kit/middleware/tracing"
 )
 
 type Producer interface {

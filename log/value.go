@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/neo532/gokit/middleware/tracing"
+	"github.com/neo532/kratos_kit/middleware/tracing"
 
 	klog "github.com/go-kratos/kratos/v2/log"
 )

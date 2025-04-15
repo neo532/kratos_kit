@@ -17,7 +17,7 @@ import (
 	gLogger "gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 
-	"github.com/neo532/gokit/log"
+	"github.com/neo532/kratos_kit/log"
 )
 
 var (

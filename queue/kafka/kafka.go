@@ -11,7 +11,7 @@ import (
 
 	klog "github.com/go-kratos/kratos/v2/log"
 
-	"github.com/neo532/gokit/log"
+	"github.com/neo532/kratos_kit/log"
 )
 
 type logger struct {

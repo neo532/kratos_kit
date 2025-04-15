@@ -3,8 +3,8 @@ package ecb
 import (
 	"github.com/forgoer/openssl"
 
-	"github.com/neo532/gokit/crypt"
-	"github.com/neo532/gokit/crypt/encoding/std"
+	"github.com/neo532/kratos_kit/crypt"
+	"github.com/neo532/kratos_kit/crypt/encoding/std"
 )
 
 type ECB struct {
